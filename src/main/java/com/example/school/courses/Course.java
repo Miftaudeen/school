@@ -15,7 +15,7 @@ public class Course{
     private String code;
     private int units;
 
-    Course(Long id, String title, String code, int units) {
+    public Course(Long id, String title, String code, int units) {
         this.id = id;
         this.title = title;
         this.code = code;

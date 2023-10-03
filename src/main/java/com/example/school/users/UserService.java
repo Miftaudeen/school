@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,8 +39,8 @@ public class UserService {
     @Transactional
     public void updateUser(Long userId, String name, String email) {
         User user = userRepository.findUserById(userId).orElseThrow(() -> new IllegalArgumentException("User with Id " + userId + " does not exists"));
-        if (name != null && name.length() != 0 && !Objects.equals(user.getname(), name)){
-            user.setname(name);
+        if (name != null && name.length() != 0 && !Objects.equals(user.getName(), name)){
+            user.setName(name);
         }
 
         if (email != null  && !Objects.equals(email, user.getEmail())){
