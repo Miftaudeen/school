@@ -2,14 +2,14 @@ package com.example.school.courses;
 
 import javax.persistence.*;
 
-import static com.example.school.courses.Constants.COURSE_SEQUENCE_NAME;
+import static com.example.school.SchoolConstants.SCHOOL_SEQUENCE_NAME;
 
 @Entity
-@Table
+@Table(name="course", schema = "public")
 public class Course{
     @Id
-    @SequenceGenerator(name=COURSE_SEQUENCE_NAME, sequenceName =COURSE_SEQUENCE_NAME, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = COURSE_SEQUENCE_NAME)
+    @SequenceGenerator(name=SCHOOL_SEQUENCE_NAME, sequenceName =SCHOOL_SEQUENCE_NAME, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SCHOOL_SEQUENCE_NAME)
     private Long id;
     private String title;
     private String code;
