@@ -14,11 +14,11 @@ public class Grade {
     @SequenceGenerator(name=SCHOOL_SEQUENCE_NAME, sequenceName =SCHOOL_SEQUENCE_NAME, allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SCHOOL_SEQUENCE_NAME)
     private Long id;
-    private Integer score;
+    private int score;
     @Transient
-    private Integer point;
+    private int point;
     @Transient
-    private Integer totalCreditPoint;
+    private int totalCreditPoint;
     @Transient
     private Character label;
     @ManyToOne
@@ -34,26 +34,30 @@ public class Grade {
         this.student = student;
     }
 
+    public Grade() {
+
+    }
+
     @Override
     public String toString() {
         return "Grade{" +
                 "id=" + id +
                 ", student='" + student.getName() + '\'' +
                 ", course='" + course.getTitle() + '\'' +
-                ", toto_units=" + totalCreditPoint +
+                ", label=" + label +
                 '}';
     }
 
-    public Integer getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
-    public Integer getPoint() {
-        if (score <= 100 && score>=70){
+    public int getPoint() {
+        if (score <= 100 && score >=70){
             return 5;
         }else if (score < 70 && score >= 60){
             return 4;
@@ -90,8 +94,8 @@ public class Grade {
         this.totalCreditPoint = totalCreditPoint;
     }
 
-    public Integer getTotalCreditPoint() {
-        return point * course.getUnits();
+    public int getTotalCreditPoint() {
+        return this.getPoint() * course.getUnits();
     }
 
     public Long getId() {

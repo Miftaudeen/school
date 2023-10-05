@@ -12,11 +12,11 @@ public class Course{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SCHOOL_SEQUENCE_NAME)
     private Long id;
     private String title;
+    @Column(unique=true)
     private String code;
     private int units;
 
-    public Course(Long id, String title, String code, int units) {
-        this.id = id;
+    public Course(String title, String code, int units) {
         this.title = title;
         this.code = code;
         this.units = units;

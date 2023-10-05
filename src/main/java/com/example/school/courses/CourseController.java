@@ -30,7 +30,7 @@ public class CourseController {
     @PutMapping(path ="{courseCode}")
     public void updateCourse(@PathVariable("courseCode") String courseCode,
                              @RequestParam(required = false) String title,
-                             @RequestParam(required = false) Integer units ){
+                             @RequestParam(required = false) int units ){
         this.courseService.updateCourse(courseCode,title, units);
     }
 }

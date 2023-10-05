@@ -45,17 +45,16 @@ public class GradeService {
     }
     @Transactional
     public void updateGrade(Long userId, String courseCode, int score) {
-        Optional<User> optionalUser = userRepository.findUserById(userId);
-        Optional<Course> optionalCourse = courseRepository.findCourseByCode(courseCode);
+        User user = userRepository.findUserById(userId).orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " does not exists"));
+        Course course = courseRepository.findCourseByCode(courseCode).orElseThrow(() -> new IllegalArgumentException("Course with code " + courseCode + " does not exists"));
 
-        if (optionalCourse.isPresent()  && optionalUser.isPresent() && (0 <= score && score <= 100)){
-            Optional<Grade> grade = gradeRepository.findGradeByCourseCodeAndStudentId(courseCode, userId);
-            if (grade.isPresent()){
-                Grade existingGrade = grade.get();
-                existingGrade.setScore(score);
-            }else {
-                Grade newGrade = new Grade(score, optionalCourse.get(), optionalUser.get());
-            }
+        Optional<Grade> grade = gradeRepository.findGradeByCourseAndStudent(course, user);
+        if (grade.isPresent()){
+            Grade existingGrade = grade.get();
+            existingGrade.setScore(score);
+        }else {
+            Grade newGrade = new Grade(score, course, user);
+            gradeRepository.save(newGrade);
         }
 
     }

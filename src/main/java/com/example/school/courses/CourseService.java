@@ -37,16 +37,15 @@ public class CourseService {
         courseRepository.deleteByCode(courseCode);
     }
     @Transactional
-    public void updateCourse(String courseCode, String title, Integer units) {
+    public void updateCourse(String courseCode, String title, int units) {
         Course course = courseRepository.findCourseByCode(courseCode).orElseThrow(() -> new IllegalArgumentException("Course with code " + courseCode + " does not exists"));
         System.out.println(title);
         if (title != null && title.length() != 0 && !Objects.equals(course.getTitle(), title)){
             System.out.println(title);
             course.setTitle(title);
-            courseRepository.save(course);
         }
 
-        if (units != null  && !Objects.equals(units, course.getUnits())){
+        if ( units != course.getUnits()){
             course.setUnits(units);
         }
 

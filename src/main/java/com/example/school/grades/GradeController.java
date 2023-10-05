@@ -29,8 +29,8 @@ public class GradeController {
     }
     @PutMapping(path ="{courseCode}")
     public void updateCourse(@PathVariable("courseCode") String courseCode,
-                             @RequestParam(required = false) Long userId,
+                             @RequestParam(required = false) Long user_id,
                              @RequestParam(required = false) Integer score ){
-        this.gradeService.updateGrade(userId, courseCode, score);
+        this.gradeService.updateGrade(user_id, courseCode, score);
     }
 }
