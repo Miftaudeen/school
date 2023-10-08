@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
 
-import static com.example.school.SchoolConstants.SCHOOL_SEQUENCE_NAME;
+import static com.example.school.users.Constants.USER_SEQUENCE_NAME;
 
 @Entity
 @Table(name="user", schema = "public")
@@ -15,8 +15,8 @@ public class User {
     }
 
     @Id
-    @SequenceGenerator(name=SCHOOL_SEQUENCE_NAME, sequenceName =SCHOOL_SEQUENCE_NAME, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SCHOOL_SEQUENCE_NAME)
+    @SequenceGenerator(name=USER_SEQUENCE_NAME, sequenceName =USER_SEQUENCE_NAME, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = USER_SEQUENCE_NAME)
     private Long id;
     private String name;
     @Column(unique=true)

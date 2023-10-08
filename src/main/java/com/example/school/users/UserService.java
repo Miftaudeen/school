@@ -1,6 +1,9 @@
 package com.example.school.users;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,16 +20,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<User> getUsers(int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+        Page<User> users = userRepository.findAll(pageReq);
+        return users.getContent();
     }
 
-    public void addNewUser(User user) {
+    public User addNewUser(User user) {
         Optional<User> optionalUser = userRepository.findUserByEmail(user.getEmail());
         if (optionalUser.isPresent()){
             throw new IllegalArgumentException("User Email already in use");
         }
         userRepository.save(user);
+        return user;
     }
 
     public void deleteUser(Long userId) {
@@ -51,5 +58,9 @@ public class UserService {
             user.setEmail(email);
         }
 
+    }
+
+    public User getUserById(Long userId) {
+        return userRepository.findUserById(userId).orElseThrow(() -> new IllegalArgumentException("User with Id " + userId + " does not exists"));
     }
 }

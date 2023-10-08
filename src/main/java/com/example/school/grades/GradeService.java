@@ -1,10 +1,13 @@
 package com.example.school.grades;
 
-import com.example.school.courses.CourseRepository;
+import com.example.school.courses.CourseService;
 import com.example.school.users.User;
 import com.example.school.courses.Course;
-import com.example.school.users.UserRepository;
+import com.example.school.users.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -12,28 +15,31 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GradeService {
     private final GradeRepository gradeRepository;
-    private final CourseRepository courseRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final CourseService courseService;
 
-    @Autowired
-    public GradeService(GradeRepository gradeRepository, CourseRepository courseRepository, UserRepository userRepository) {
-        this.gradeRepository = gradeRepository;
-        this.courseRepository = courseRepository;
-        this.userRepository = userRepository;
+    public List<Grade> getGrades(int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+        return gradeRepository.findAll(pageReq).getContent();
     }
 
-    public List<Grade> getGrades() {
-        return gradeRepository.findAll();
-    }
-
-    public void addNewGrade(Grade grade) {
-        Optional<Grade> optionalGrade = gradeRepository.findGradeById(grade.getId());
-        if (optionalGrade.isPresent()){
-            throw new IllegalArgumentException("Grade Code already in use");
+    public Grade addNewGrade(GradeDto gradeDto) {
+        User user = userService.getUserById(gradeDto.getUser());
+        Course course = courseService.getCourseByCode(gradeDto.getCourse());
+        Optional<Grade> grade = gradeRepository.findGradeByCourseAndUser(course, user);
+        if (grade.isPresent()){
+            Grade existingGrade = grade.get();
+            existingGrade.setScore(gradeDto.getScore());
+            return existingGrade;
+        }else {
+            Grade newGrade = new Grade(gradeDto.getScore(), course, user);
+            gradeRepository.save(newGrade);
+            return newGrade;
         }
-        gradeRepository.save(grade);
     }
 
     public void deleteGrade(Long gradeId) {
@@ -43,19 +49,8 @@ public class GradeService {
         }
         gradeRepository.deleteById(gradeId);
     }
-    @Transactional
-    public void updateGrade(Long userId, String courseCode, int score) {
-        User user = userRepository.findUserById(userId).orElseThrow(() -> new IllegalArgumentException("User with id " + userId + " does not exists"));
-        Course course = courseRepository.findCourseByCode(courseCode).orElseThrow(() -> new IllegalArgumentException("Course with code " + courseCode + " does not exists"));
 
-        Optional<Grade> grade = gradeRepository.findGradeByCourseAndStudent(course, user);
-        if (grade.isPresent()){
-            Grade existingGrade = grade.get();
-            existingGrade.setScore(score);
-        }else {
-            Grade newGrade = new Grade(score, course, user);
-            gradeRepository.save(newGrade);
-        }
-
+    public List<Grade> getUserGrades(User user) {
+        return gradeRepository.findGradeByUser(user);
     }
 }

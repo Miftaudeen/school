@@ -1,15 +1,18 @@
 package com.example.school.courses;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
-import static com.example.school.SchoolConstants.SCHOOL_SEQUENCE_NAME;
+import static com.example.school.courses.Constants.COURSE_SEQUENCE_NAME;
 
 @Entity
+@NoArgsConstructor
 @Table(name="course", schema = "public")
 public class Course{
     @Id
-    @SequenceGenerator(name=SCHOOL_SEQUENCE_NAME, sequenceName =SCHOOL_SEQUENCE_NAME, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SCHOOL_SEQUENCE_NAME)
+    @SequenceGenerator(name=COURSE_SEQUENCE_NAME, sequenceName =COURSE_SEQUENCE_NAME, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = COURSE_SEQUENCE_NAME)
     private Long id;
     private String title;
     @Column(unique=true)
@@ -20,10 +23,6 @@ public class Course{
         this.title = title;
         this.code = code;
         this.units = units;
-    }
-
-    public Course() {
-
     }
 
     public Long getId() {

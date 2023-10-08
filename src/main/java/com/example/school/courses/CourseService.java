@@ -1,6 +1,8 @@
 package com.example.school.courses;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,37 +19,48 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
+    public List<Course> getCourses(int page, int size, String sortDir, String sort) {
+        PageRequest pageReq
+                = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sort);
+        return courseRepository.findAll(pageReq).getContent();
     }
 
-    public void addNewCourse(Course course) {
+    public Course addNewCourse(Course course) {
         Optional<Course> optionalCourse = courseRepository.findCourseByCode(course.getCode());
-        if (optionalCourse.isPresent()){
+        if (optionalCourse.isPresent()) {
             throw new IllegalArgumentException("Course Code already in use");
         }
         courseRepository.save(course);
+        return course;
     }
 
     public void deleteCourse(String courseCode) {
-        boolean exists = courseRepository.existsByCode(courseCode);
-        if (!exists){
+        Optional<Course> optionalCourse = courseRepository.findCourseByCode(courseCode);
+        if (optionalCourse.isEmpty()) {
             throw new IllegalArgumentException("Course with code does not exists");
         }
-        courseRepository.deleteByCode(courseCode);
+        courseRepository.delete(optionalCourse.get());
     }
+
     @Transactional
-    public void updateCourse(String courseCode, String title, int units) {
+    public Course updateCourse(String courseCode, CourseDto courseDto) {
+        String title = courseDto.getTitle();
+        Integer units = courseDto.getUnits();
         Course course = courseRepository.findCourseByCode(courseCode).orElseThrow(() -> new IllegalArgumentException("Course with code " + courseCode + " does not exists"));
-        System.out.println(title);
-        if (title != null && title.length() != 0 && !Objects.equals(course.getTitle(), title)){
+        if (title != null && title.length() != 0 && !Objects.equals(course.getTitle(), title)) {
             System.out.println(title);
             course.setTitle(title);
         }
 
-        if ( units != course.getUnits()){
+        if (units != null && units != course.getUnits()) {
+
             course.setUnits(units);
         }
+        return course;
 
+    }
+
+    public Course getCourseByCode(String courseCode) {
+        return courseRepository.findCourseByCode(courseCode).orElseThrow(() -> new IllegalArgumentException("Course with code " + courseCode + " does not exists"));
     }
 }
